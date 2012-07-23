@@ -16,6 +16,7 @@ Dir.mktmpdir do |dir|
   end
 
   descr_dir = File.join(dir, 'suse/setup/descr')
+  arch = `rpm --eval "%_arch"`.strip
   FileUtils.mkdir_p descr_dir
   Zlib::GzipWriter.open(File.join(descr_dir, 'packages.gz')) do |p|
     Zlib::GzipWriter.open(File.join(descr_dir, 'packages.en.gz')) do |pe|
