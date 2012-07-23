@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+require 'tmpdir'
+require 'zlib'
+
+Dir.mktmpdir do |dir|
+
+  File.open(File.join(dir, 'content'), 'w') do |f|
+    f.puts "CONTENTSTYLE 11"
+    f.puts "DATADIR suse"
+    f.puts "DESCRDIR suse/setup/descr"
+    f.puts "DISTRIBUTION rubygems.org"
+    f.puts "LABEL rubygems.org"
+    f.puts "LINGUAS en"
+    f.puts "NAME rubygems.org"
+    f.puts "RELNOTESURL http://www.rubygems.org"
+    f.puts "VENDOR rubygems.org"
+    f.puts "VERSION 1.0"
+    f.puts "RELEASE 0"
+  end
+
+  descr_dir = File.join(dir, 'suse/setup/descr')
+  FileUtils.mkdir_p descr_dir
+  Zlib::GzipWriter.open(File.join(descr_dir, 'packages.gz')) do |p|
+    Zlib::GzipWriter.open(File.join(descr_dir, 'packages.en.gz')) do |pe|
+      p.puts("=Ver: 2.0")
+      # TODO add support for only latest http://rubygems.org/latest_specs.4.8.gz
+      gems = Marshal.load(Gem.inflate(open("Marshal.4.8.Z").read))
+
+      count = 0
+      gems.each do |element|
+        count += 1
+        progress = (count/gems.size.to_f)*100
+        g = element[1]
+        STDERR.puts progress
+        p.puts "=Pkg: rubygem-#{g.name} #{g.version} 0 x86_64"
+        # =Cks: SHA256 lallala
+        p.puts "+Req:"
+        g.dependencies.each do |dep|
+          p.puts "rubygem-#{dep.name}"
+        end
+        p.puts "-Req:"
+        p.puts "=Grp: Development/Languages/Ruby"
+        licenses = g.licenses.join(';')
+        p.puts "=Lic: #{licenses}" unless licenses.empty?
+        p.puts "=Vnd: rubygems.org"
+        # Not supported tags
+        # Src Tim Siz
+        p.puts "Loc: 1 downloads/#{g.name}-#{g.version}.gem"
+        pe.puts "=Pkg: #{g.name} #{g.version} 0 x86_64"
+        pe.puts "=Sum: #{g.summary}"
+        pe.puts "+Des:"
+        pe.puts "#{g.description}"
+        pe.puts "-Des:"
+
+      end
+    end
+
+  end
+  system("repo2solv.sh #{dir}")
+
+end
