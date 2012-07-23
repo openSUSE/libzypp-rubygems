@@ -31,7 +31,6 @@ Dir.mktmpdir do |dir|
         count += 1
         progress = (count/gems.size.to_f)*100
         g = element[1]
-        STDERR.puts progress
         p.puts "=Pkg: rubygem-#{g.name} #{g.version} 0 x86_64"
         # =Cks: SHA256 lallala
         p.puts "+Req:"
@@ -45,8 +44,8 @@ Dir.mktmpdir do |dir|
         p.puts "=Vnd: rubygems.org"
         # Not supported tags
         # Src Tim Siz
-        p.puts "Loc: 1 downloads/#{g.name}-#{g.version}.gem"
-        pe.puts "=Pkg: #{g.name} #{g.version} 0 x86_64"
+        p.puts "=Loc: 1 downloads/#{g.name}-#{g.version}.gem"
+        pe.puts "=Pkg: rubygem-#{g.name} #{g.version} 0 x86_64"
         pe.puts "=Sum: #{g.summary}"
         pe.puts "+Des:"
         pe.puts "#{g.description}"
