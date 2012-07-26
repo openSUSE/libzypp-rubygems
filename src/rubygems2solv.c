@@ -209,17 +209,27 @@ static int parse_requirement(GemContext *ctx, const char *name, yaml_node_t *nod
     if (!version)
       return -1;
 
-    /*fprintf(stderr, "%s %s %s\n", name, op, version);*/
+    int flags = 0;
+
+    char *fbp;
+    for (fbp = op;; fbp++)
+    {
+        if (*fbp == '>')
+            flags |= REL_GT;
+        else if (*fbp == '=')
+            flags |= REL_EQ;
+        else if (*fbp == '<')
+            flags |= REL_LT;
+        else
+            break;
+    }
 
     ctx->s->requires = repo_addid_dep(ctx->s->repo, ctx->s->requires,
         pool_rel2id(ctx->s->repo->pool,
                 pool_str2id(ctx->s->repo->pool, join2(&ctx->jd, "rubygem", "-", name), 1),
                 pool_str2id(ctx->s->repo->pool, version, 1),
-            REL_EQ, 1),
+            flags, 1),
         0);
-
-    //  s->requires = adddep(pool, &pd, s->requires, line, -SOLVABLE_PREREQMARKER, pd.kind);
-
     return 0;
 }
 
