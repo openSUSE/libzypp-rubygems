@@ -1,0 +1,43 @@
+# HOWTO setup
+
+* Install files from here:
+      * repo2solv.sh rubygems2solv
+	in $PATH
+      * gem2rpm gem2rpm.sh gem2rpm.spec.template
+	in /usr/lib/zypp/plugins/generator
+
+* Get the latest libzypp providing `libzypp(plugin:generator)`
+	(currently form [native-pack] branch)
+
+* Get the lates rubygem-gem2rpm from obs://openSUSE:Tools:Unstable
+	zypper ar -f obs://openSUSE:Tools:Unstable tools_unstable
+	zypper in --from tools_unstable rubygem-gem2rpm
+
+* Add rubygems.org repo. It should be listed as type _rubygems_. Enabling
+  keeppackages is a good idea. (later lower priority to prevent conversion
+  if an rppm is already provided by some repo):
+	zypper ar -f -k http://rubygems.org rubygems
+	zypper lr -d
+
+* Verry carefully try to install some gems
+	zypper in -f --from rubygems rubygem-activesupport
+	zypper in --from rubygems -f rubygem-json
+
+* If you were lucky gem and rpm are still in the packagecache:
+	find /var/cache/zypp/packages/rubygems/ -type f
+
+  If not, check zypper output and logs
+	less /var/log/zypp/gem2rpm.last.log
+
+
+# Known issues:
+
+* Plugintimeout while converting; try ZYPP_PLUGIN_RECEIVE_TIMEOUT=60 (90,120,...)
+
+* Generated packages have different vendor than the gem (zypper reports vendor change)
+
+* Missing feedback and progress in zypper
+
+* Providing the right build deps
+
+* for sure some more ...

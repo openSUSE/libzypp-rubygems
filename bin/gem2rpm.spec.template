@@ -1,0 +1,69 @@
+#
+# spec file for package rubygem-<%= spec.name %>
+#
+# Copyright (c) <%= Time.now.year %> SUSE LINUX Products GmbH, Nuernberg, Germany.
+#
+# All modifications and additions to the file contributed by third parties
+# remain the property of their copyright owners, unless otherwise agreed
+# upon. The license for this file, and modifications and additions to the
+# file, is the same license as for the pristine package itself (unless the
+# license for the pristine package is not an Open Source License, in which
+# case the license is the MIT License). An "Open Source License" is a
+# license that conforms to the Open Source Definition (Version 1.9)
+# published by the Open Source Initiative.
+
+# Please submit bugfixes or comments via http://bugs.opensuse.org/
+#
+
+
+Name:           rubygem-<%= spec.name %>
+Version:        <%= spec.version %>
+Release:        0
+%define mod_name <%= spec.name %>
+%define mod_full_name %{mod_name}-%{version}
+
+BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+BuildRequires:  ruby-macros >= 1
+<% for req in spec.required_ruby_version -%>
+Requires:       ruby <%= req %>
+BuildRequires:  ruby-devel <%= req %>
+<% end -%>
+<% if false -%>
+<% for d in spec.runtime_dependencies -%>
+# <%= d.name %> <%= d.__getobj__().requirement %>
+<% for req in d.requirement -%>
+BuildRequires:  rubygem(<%= d.name %>) <%= req  %>
+<% end -%>
+<% end -%>
+<% end -%>
+Url:            <%= spec.homepage %>
+Source:         %{mod_full_name}.gem
+Summary:        <%= spec.summary.gsub(/\.$/, "") %>
+<% unless spec.licenses.empty? -%>
+License:        <%= spec.licenses.join(" and ") %>
+<% else -%>
+License:        CHECK(Ruby)
+<% end -%>
+Group:          Development/Languages/Ruby
+
+%description
+<%= spec.description -%>
+
+%prep
+%gem_unpack
+
+%build
+%gem_build
+
+%install
+%gem_install --no-rdoc --no-ri -f %{S:0}
+<% unless spec.extensions.empty? -%>
+%gem_cleanup
+<% end -%>
+
+%files
+%defattr(-,root,root,-)
+# %_libdir/ruby soes not work as some gems use /usr/bin etc.
+/
+
+%changelog
