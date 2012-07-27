@@ -34,7 +34,8 @@ class Gem2RpmPlugin( Plugin ):
     print " inputfile %s" % headers["inputfile"]
     print " outputfile %s" % headers["outputfile"]
 
-    args = [ "/usr/lib/zypp/plugins/generator/gem2rpm.sh",
+    # expect script at the same location as self
+    args = [ "%s/gem2rpm.sh" % os.path.dirname( sys.argv[0] ),
 	     headers["inputfile"],
 	     headers["outputfile"]
 	   ]
