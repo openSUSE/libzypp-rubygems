@@ -36,7 +36,7 @@ BuildRequires:  rubygem(<%= d.name %>) <%= req  %>
 <% end -%>
 <% end -%>
 <% end -%>
-Url:            <%= spec.homepage %>
+#Url:            <%= spec.homepage %>
 Source:         %{mod_full_name}.gem
 Summary:        <%= spec.summary.gsub(/\.$/, "") %>
 <% unless spec.licenses.empty? -%>
@@ -49,11 +49,6 @@ Group:          Development/Languages/Ruby
 %description
 <%= spec.description -%>
 
-%prep
-%gem_unpack
-
-%build
-%gem_build
 
 %install
 %gem_install --no-rdoc --no-ri -f %{S:0}
