@@ -37,7 +37,7 @@ Dir.mktmpdir do |dir|
           next if dep.type != :runtime
           dep.requirement.requirements.each do |req|
             op, version = req[0], req[1]
-            if op[0] == '~'
+            if op[0,1] == '~'
               p.puts "rubygem-#{dep.name} >= #{version}"
               p.puts "rubygem-#{dep.name} < #{version.bump}"
               next
