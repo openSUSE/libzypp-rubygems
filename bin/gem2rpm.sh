@@ -16,6 +16,7 @@ pushd "$MTMPDIR"
 DROPPERM=eval
 test $UID = 0 && DROPPERM="su nobody -c "
 
+test -f "$OUTPUTFILE" && exit 0
 rm -f "$OUTPUTFILE"
 
 /usr/bin/gem2rpm --template "$SPECTEMPLATE" --local --output gem2rpm.spec "${INPUTFILE}" || exit 1
