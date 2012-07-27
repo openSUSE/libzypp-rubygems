@@ -34,7 +34,16 @@ Dir.mktmpdir do |dir|
         # =Cks: SHA256 lallala
         p.puts "+Req:"
         g.dependencies.each do |dep|
-          p.puts "rubygem-#{dep.name}"
+          next if dep.type != :runtime
+          dep.requirement.requirements.each do |req|
+            op, version = req[0], req[1]
+            if op[0] == '~'
+              p.puts "rubygem-#{dep.name} >= #{version}"
+              p.puts "rubygem-#{dep.name} < #{version.bump}"
+              next
+            end
+            p.puts "rubygem-#{dep.name} #{op} #{version}"
+          end
         end
         p.puts "-Req:"
         p.puts "=Grp: Development/Languages/Ruby"
